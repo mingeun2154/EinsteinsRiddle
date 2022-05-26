@@ -36,11 +36,15 @@
 void expand(int index); /** backtracking **/
 int promising(int level); /** depth=level인 노드를 탐색할지 말지 결정한다. **/
 void printSolution(); /** 정답을 출력한다 **/
+void printNumberOfNode(); /** 방문한 노드의 개수를 출력한다. **/
 
 const char* printStringColor(int colorNum); // colorNum에 대응되는 문자열을 return한다.
 const char* printStringNationality(int nationNum); // nationNum에 대응되는 문자열을 reutnr한다.
 const char* printStringBeverage(int beverageNum); // beverageNum에 대응되는 문자열을 return한다.
 const char* printStringBrand(int brandNum); // brandNum에 대응되는 문자열을 return한다.
 const char* printStringPet(int petNum); // petNum에 대응되는 문자열을 return한다.
+
+/** for test **/
+void printStatus();
 
 #endif

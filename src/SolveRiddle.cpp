@@ -4,4 +4,5 @@
 int main(){
   std::cout<<"solve Einstein's Riddle\n";
   expand(0);
+  printNumberOfNode();
 }
