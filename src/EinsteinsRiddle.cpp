@@ -35,12 +35,13 @@ vector<int> solution;
 void expand(int depth){
   if(depth==25){
     printSolution();
-    solutionCount++;
     return;
   }
 
   /** backtrack **/
   if(depth>0 && depth%5==0){
+    // cout<<depth<<endl;
+    // printStatus();
     if(promising(depth)==-1) {
       return;
     }
@@ -125,6 +126,10 @@ void expand(int depth){
   }
 }
 
+void printNumberOfNode(){
+  cout<<"방문한 노드 개수 : "<<totalNode<<endl;
+}
+
 void printSolution(){
   for(int i=0;i<25;i++){
     if(i%5==0)
@@ -141,7 +146,7 @@ void printSolution(){
       cout<<"beverage : "<<printStringBeverage(solution[i]);
       break;
     case 3:
-      cout<<"brand of cigar : "<<printStringBeverage(solution[i]);
+      cout<<"brand of cigar : "<<printStringBrand(solution[i]);
       break;
     case 4:
       cout<<"pet : "<<printStringPet(solution[i]);
@@ -153,8 +158,6 @@ void printSolution(){
   }
 
   cout<<endl;
-  cout<<solutionCount<<endl;
-  cout<<"방문한 노드 수 : "<<totalNode<<endl;
 }
 
 const char* printStringColor(int colorNum){
@@ -248,106 +251,196 @@ const char* printStringPet(int petNum){
  * (level%5)번째 집의 성립 여부를 판단하여 트리를 확장할지 결정한다. 
  * 1: 계속 진행, -1: backtrack
 **/
-int promising(int level){
+int promising(int depth){
   // 색, 국적, 등의 정보가 담긴 index
-  int color = level-5;
-  int nationality = level-4;
-  int beverage = level-3;
-  int brand = level-2;
-  int pet = level-1;
+  int color = depth-5;
+  int nationality = depth-4;
+  int beverage = depth-3;
+  int brand = depth-2;
+  int pet = depth-1;
 
   /** hint1 - The Brit lives in a red house**/
   if(solution[color]==RED)
-    if(solution[nationality]!=BRIT)
+    if(solution[nationality]!=BRIT){
+      // cout<<"-1-\n";
       return -1;
+    }
   if(solution[nationality]==BRIT)
-    if(solution[color]!=RED)
+    if(solution[color]!=RED){
+      // cout<<"-1-\n";
       return -1;
+    }
   /** hint2 - The Swede keeps dogs as pets**/
   if(solution[nationality]==SWEDE)
-    if(solution[pet]!=DOG)
+    if(solution[pet]!=DOG){
+      // cout<<"-2-\n";
       return -1;
+    }
   if(solution[pet]==DOG)
-    if(solution[nationality]!=SWEDE)
+    if(solution[nationality]!=SWEDE){
+      // cout<<"-2-\n";
       return -1;
+    }
   /** hint3 - The Dane drinks tea **/
   if(solution[nationality]==DANE)
-    if(solution[beverage]!=TEA)
+    if(solution[beverage]!=TEA){
+      // cout<<"-3-\n";
       return -1;
+    }
   if(solution[beverage]==TEA)
-    if(solution[nationality]!=DANE)
+    if(solution[nationality]!=DANE){
+      // cout<<"-3-\n";
       return -1;
+    }
+  /** hint4 - The green house is on the left of the white house. **/
+  if(depth>9){
+    if(solution[color]==WHITE)
+      if(solution[color-5]!=GREEN){
+        // cout<<"-4-\n";
+        return -1;
+      }
+    if(solution[color-5]==GREEN)
+      if(solution[color]!=WHITE){
+        // cout<<"-4-\n";
+        return -1;
+      }
+  }
   /** hint5 - The green house owner drinks coffee **/
   if(solution[color]==GREEN)
-    if(solution[beverage]!=COFFEE)
+    if(solution[beverage]!=COFFEE){
+      // cout<<"-5-\n";
       return -1;
+    }
   if(solution[beverage]==COFFEE)
-    if(solution[color]!=GREEN)
+    if(solution[color]!=GREEN){
+      // cout<<"-5-\n";
       return -1;
+    }
   /** hint6 - The person who smokes Pall Mall rears birds **/
   if(solution[brand]==PALL_MALL)
-    if(solution[pet]!=BIRD)
+    if(solution[pet]!=BIRD){
+      // cout<<"-6-\n";
       return -1;
+    }
   if(solution[pet]==BIRD)
-    if(solution[brand]!=PALL_MALL)
+    if(solution[brand]!=PALL_MALL){
+      // cout<<"-6-\n";
       return -1;
-  /** hint7 - 첫 번째 집 : DUNHILL **/
-  if(level==5)
-    if(solution[brand]!=DUNHILL) 
+    }
+  /** hint7 - The owner of the yellow house smokes Dunhill **/
+  if(solution[color]==YELLOW)
+    if(solution[brand]!=DUNHILL){
+      // cout<<"-7-\n";
       return -1;
+    }
   if(solution[brand]==DUNHILL) 
-    if(level!=5) 
+    if(solution[color]!=YELLOW){
+      // cout<<"-7-\n";
       return -1;
+    }
   /** hint8 - 가운데 집 : MILK **/
-  if(level==15) /** 가운데 집 :  MILK **/
-    if(solution[beverage]!=MILK)
+  if(depth==15) /** 가운데 집 :  MILK **/
+    if(solution[beverage]!=MILK){
+      // cout<<"-8-\n";
       return -1;
+    }
   if(solution[beverage]==MILK)
-    if(level!=15) 
+    if(depth!=15) {
+      // cout<<"-8-\n";
       return -1;
+    }
   /** hint9 - 첫 번째 집 : Norweigian**/
-  if(level==5)
-    if(solution[nationality]!=NORWEIGIAN) 
+  if(depth==5)
+    if(solution[nationality]!=NORWEIGIAN) {
+      // cout<<"-9-\n";
       return -1;
-  if(solution[nationality]!=NORWEIGIAN) 
-    if(level!=5) 
+    }
+  if(solution[nationality]==NORWEIGIAN) 
+    if(depth!=5) {
+      // cout<<"-9-\n";
       return -1;
-  /** hint11 - 두 번째 집 : Horse **/
-  if(level==10)
-    if(solution[pet]!=HORSE)
+    }
+  /** hint10 - The man who smokes Blend lives next to the one who keeps cats **/
+  if(depth>9 && depth<21){
+    if(solution[brand]==BLEND)
+      if(solution[pet-5]!=CAT)
+        return -1;
+    if(solution[pet]==CAT)
+      if(solution[brand-5]!=BLEND)
+        return -1;
+  }
+  /** hint11 - The man who keeps horses lives next to the main who smokes Dunhill. **/
+  if(depth==10)
+    if(solution[pet]!=HORSE){
+      // cout<<"-11-\n";
       return -1;
+    }
   if(solution[pet]==HORSE)
-    if(level!=10)
+    if(depth!=10){
+      // cout<<"-11-\n";
       return -1;
-  /** hint12 **/
+    }
+  /** hint12 - The owner who smokes blue Master drinks beer. **/
   if(solution[brand]==BLUE_MASTER)
-    if(solution[beverage]!=BEER)
+    if(solution[beverage]!=BEER){
+      // cout<<"-12-\n";
       return -1;
+    }
   if(solution[beverage]==BEER)
-    if(solution[brand]!=BLUE_MASTER)
+    if(solution[brand]!=BLUE_MASTER){
+      // cout<<"-12-\n";
       return -1;
-  /** hint13 **/
+    }
+  /** hint13 The German somkes Prince. **/
   if(solution[nationality]==GERMAN)
-    if(solution[brand]!=PRINCE)
+    if(solution[brand]!=PRINCE){
+      // cout<<"-13-\n";
       return -1;
+    }
   if(solution[brand]==PRINCE)
-    if(solution[nationality]!=GERMAN)
+    if(solution[nationality]!=GERMAN){
+      // cout<<"-13-\n";
       return -1;
+    }
   /** hint14 두 번째 집 : BLUE **/
-  if(level==10) 
-    if(solution[level-5]!=BLUE) 
-    return -1;
-  if(solution[level-5]==BLUE) 
-    if(level!=10)
+  if(depth==10) 
+    if(solution[depth-5]!=BLUE) {
+      // cout<<"-14-\n";
       return -1;
+    }
+  if(solution[depth-5]==BLUE) 
+    if(depth!=10){
+      // cout<<"-14-\n";
+      return -1;
+    }
+  /** hint15 - The man who smokes Blend has a neighbor who drinks water. **/
+  if(depth>9 && depth<21){
+    if(solution[brand]==BLEND)
+      if(solution[beverage-5]!=WATER)
+        return -1;
+    if(solution[beverage]==WATER)
+      if(solution[brand-5]!=BLEND)
+        return -1;
+  }
   /** extra **/
-  if(level==5) /** 첫 번째 집 : YELLOW**/
-    if(solution[color]!=YELLOW) /** 첫 번째 집 : YELLOW**/
+  if(depth==5) /** 첫 번째 집 : YELLOW**/
+    if(solution[color]!=YELLOW){ /** 첫 번째 집 : YELLOW**/
+      // cout<<"-extra-\n";
       return -1;
+    }
   if(solution[color]==YELLOW) /** 첫 번째 집 : YELLOW**/
-    if(level!=5) /** 첫 번째 집 : YELLOW**/
+    if(depth!=5){ /** 첫 번째 집 : YELLOW**/
+      // cout<<"-extra-\n";
       return -1;
+    }
 
   /** promising **/
   return 1;
+}
+
+void printStatus(){
+  vector<int>::iterator iter;
+  for(iter=solution.begin();iter!=solution.end();++iter)
+    cout<<*iter<<' ';
+  cout<<"\n";
 }
